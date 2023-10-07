@@ -33,7 +33,7 @@
 				<th>ObjectId</th>
 				<th>Name</th>
 				<th>Level</th>
-				<th>Active</th>
+				<th>Active?</th>
 				<th>Created At</th>
 				<th
 					><a href="/roles/create" class="btn btn-sm variant-filled-secondary">

@@ -34,10 +34,14 @@ const login: Action = async ({ request, cookies }) =>
     });
 
     const json = await res.json();
+    console.log(json);
 
     if (res.ok)
     {
-
+        if (json.data.user.role === "player")
+        {
+            return fail(400, { message: "Not an admin user." });
+        }
         cookies.set("user", JSON.stringify(json.data.user), {
             path: "/"
         });

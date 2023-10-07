@@ -3,14 +3,15 @@
 	import { page } from '$app/stores';
 	import { createOne, updateOne } from '$lib/api/common';
 	import { Collections } from '$lib/consts/db';
-	import { InputChip } from '@skeletonlabs/skeleton';
+	import { InputChip, SlideToggle } from '@skeletonlabs/skeleton';
 
 	export let doc = {
 		_id: '',
 		path: '',
 		entity: '',
 		method: '',
-		access: ['root']
+		access: ['root'],
+		active: false
 	};
 
 	const selectedAccess = $page.data.roles.map((v: any) => ({
@@ -30,7 +31,8 @@
 				path: doc.path,
 				entity: doc.entity,
 				method: doc.method,
-				access: selectedAccess.filter((v: any) => v.checked).map((v: any) => v.label)
+				access: selectedAccess.filter((v: any) => v.checked).map((v: any) => v.label),
+				active: doc.active
 			};
 
 			const data = create
@@ -101,14 +103,14 @@
 						{/each}
 					</div>
 				</label>
-				<!-- <input
-						class="p-3 input variant-soft"
-						type="text"
-						name="access"
-						placeholder="Access"
-						bind:value={doc.access}
-					/> -->
-				<!-- <InputChip name="access" bind:value={doc.access} whitelist={['root', 'admin']} /> -->
+				<br />
+				<SlideToggle
+					name="slider-label"
+					size="sm"
+					bind:checked={doc.active}
+					disabled={create}
+					active="bg-surface-300">Active?</SlideToggle
+				>
 
 				<hr class="my-6" />
 				<button type="submit" class={`w-full btn variant-filled-secondary`} disabled={isLoading}

@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ locals }) =>
 {
     if (locals.user)
     {
-        throw redirect(302, '/configs');
+        throw redirect(302, '/users');
     } else
     {
         throw redirect(302, '/auth/login');

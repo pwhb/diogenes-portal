@@ -58,3 +58,15 @@ export const deleteOne = async (collectionName: string, id: string, token: strin
     const data = await res.json();
     return data;
 };
+
+export const getPermissions = async (token: string) =>
+{
+    const url = `${PUBLIC_BACKEND_URL}/api/v1/permissions?active=true&sort_by=_id`;
+    const res = await fetch(url, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+    const data = await res.json();
+    return data;
+};

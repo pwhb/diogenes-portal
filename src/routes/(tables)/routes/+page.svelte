@@ -15,11 +15,12 @@
 		size: $page.data.total,
 		amounts: [10, 20]
 	} satisfies PaginationSettings;
-	const initialCount = $page.data.data.length;
+
+	// let $page.data.data = $page.data.data;
 	let display = $page.data.data.slice(paginationSettings.limit);
 
 	$: {
-		if (paginationSettings.limit * (paginationSettings.page + 1) > initialCount) {
+		if (paginationSettings.limit * (paginationSettings.page + 1) > $page.data.data.length) {
 			(async () => {
 				const data = await getMany(
 					Collections.routes,
@@ -29,11 +30,11 @@
 			})();
 		} else {
 			display =
-				paginationSettings.limit === initialCount
+				paginationSettings.limit === $page.data.data.length
 					? $page.data.data
 					: $page.data.data.slice(
 							paginationSettings.limit * paginationSettings.page,
-							paginationSettings.limit
+							paginationSettings.limit * (paginationSettings.page + 1)
 					  );
 		}
 	}
@@ -65,6 +66,7 @@
 				<th>Entity</th>
 				<th>Method</th>
 				<th>Access</th>
+				<th>Active?</th>
 				<th>
 					<!-- <button type="button" class="btn btn-sm variant-filled-secondary">
 						<span>Create</span>
@@ -78,9 +80,35 @@
 					<th>{i + 1 + paginationSettings.limit * paginationSettings.page}</th>
 					<td>{row._id}</td>
 					<td>{row.path}</td>
-					<td>{row.entity}</td>
-					<td>{row.method}</td>
-					<td>{row.access}</td>
+					<td><span class="font-semibold">{row.entity}</span></td>
+					<td>
+						{#if row.method === 'GET'}
+							<span class="bg-teal-600 text-neutral-100 badge">{row.method}</span>
+						{:else if row.method === 'POST'}
+							<span class="bg-yellow-600 text-neutral-100 badge">{row.method}</span>
+						{:else if row.method === 'PATCH'}
+							<span class="bg-fuchsia-600 text-neutral-100 badge">{row.method}</span>
+						{:else if row.method === 'PUT'}
+							<span class="bg-violet-600 text-neutral-100 badge">{row.method}</span>
+						{:else if row.method === 'DELETE'}
+							<span class="bg-red-600 text-neutral-100 badge">{row.method}</span>
+						{/if}
+					</td>
+					<td>
+						{#if row.access.includes('all')}
+							<span class="bg-red-600 text-neutral-100 badge">{row.access}</span>
+						{:else if row.access.length === 1 && row.access[0] === 'root'}
+							<span class="bg-green-600 text-neutral-100 badge">{row.access}</span>
+						{:else}
+							<span class="bg-slate-600 text-neutral-100 badge">{row.access}</span>
+						{/if}
+					</td>
+					<td>
+						<span
+							class={`badge ${row.active ? 'variant-filled-secondary' : 'variant-filled-primary'}`}
+							>{row.active}</span
+						>
+					</td>
 					<td>
 						<a href={`/routes/${row._id}`} class="btn btn-sm variant-filled">
 							<span>Edit</span>

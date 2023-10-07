@@ -1,36 +1,30 @@
 <script lang="ts">
-	const menus = [
-		{
-			name: 'Configs',
-			href: '/configs'
-		},
-		{
-			name: 'Users',
-			href: '/users'
-		},
-		{
-			name: 'Roles',
-			href: '/roles'
-		},
-		{
-			name: 'Routes',
-			href: '/routes'
-		},
-		{
-			name: 'Uploads',
-			href: '/uploads'
-		}
-	];
+	import { page } from '$app/stores';
+
+	const menus = $page.data.permissions
+		.filter((v: any) => v.routes.length > 1)
+		.map((v: any) => ({
+			name: v._id,
+			href: `/${v._id}`
+		}));
 </script>
 
 <nav class="p-4 list-nav">
 	<ul>
+		<li>
+			<a href={`/users/${$page.data.user._id}`} class="flex-wrap">
+				<span class="font-bold text text-secondary-500">{$page.data.user.username}</span>
+				<span class="badge variant-outline-primary">{$page.data.user.role}</span>
+			</a>
+		</li>
+		<hr class="my-3" />
 		{#each menus as menu}
-			<li><a href={menu.href}>{menu.name}</a></li>
+			<li><a href={menu.href} class="capitalize">{menu.name}</a></li>
 		{/each}
+		<hr class="my-3" />
 		<li>
 			<form action="/logout" method="POST" class="w-full">
-				<button type="submit">Log out</button>
+				<button type="submit" class="w-full">Log out</button>
 			</form>
 		</li>
 	</ul>

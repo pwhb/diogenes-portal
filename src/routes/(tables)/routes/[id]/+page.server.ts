@@ -6,10 +6,10 @@ import { Collections } from "$lib/consts/db";
 export const load: PageServerLoad = async ({ params }) =>
 {
     const data = await getOne(Collections.routes, params.id);
-    const rolesRes = await getMany(Collections.roles, "active=true");
+    const rolesRes = await getMany(Collections.roles, "active=true&sort_by=level");
     if (data && rolesRes)
     {
-        const roles = ["all", ...rolesRes.data.map((v: any) => v.name)];
+        const roles = [...rolesRes.data.map((v: any) => v.name), "all"];
         return {
             data: data.data,
             roles: roles
