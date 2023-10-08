@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	
+	import RowButtons from '$lib/components/RowButtons.svelte';
+	import { Collections } from '$lib/consts/db';
 </script>
 
 <!-- Responsive Container (recommended) -->
@@ -28,12 +29,7 @@
 					<td>{row.name}</td>
 					<td>{row.updatedAt}</td>
 					<td>
-						<a href={`/configs/${row._id}`} class="btn btn-sm variant-filled">
-							<span>Edit</span>
-						</a>
-						<button type="button" class="btn btn-sm variant-filled-primary">
-							<span>Delete</span>
-						</button>
+						<RowButtons entity={Collections.configs} rowId={row._id} />
 					</td>
 				</tr>
 			{/each}

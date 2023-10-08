@@ -34,7 +34,6 @@ const login: Action = async ({ request, cookies }) =>
     });
 
     const json = await res.json();
-    console.log(json);
 
     if (res.ok)
     {

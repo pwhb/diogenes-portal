@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
-	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { deleteOne, getMany } from '$lib/api/common';
+	import { getMany } from '$lib/api/common';
 	import { Collections } from '$lib/consts/db';
 
-	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-
-	const modalStore = getModalStore();
+	import RowButtons from '$lib/components/RowButtons.svelte';
+	import { queryString } from '$lib/helpers/parser';
 
 	let paginationSettings = {
 		page: 0,
@@ -16,44 +14,59 @@
 		amounts: [10, 20]
 	} satisfies PaginationSettings;
 
-	// let $page.data.data = $page.data.data;
-	let display = $page.data.data.slice(paginationSettings.limit);
+	let display: any[] = $page.data.data.slice(
+		paginationSettings.limit * paginationSettings.page,
+		paginationSettings.limit * (paginationSettings.page + 1)
+	);
+	let searched: any[] = [];
+	let search = {
+		q: ''
+	};
 
-	$: {
-		if (paginationSettings.limit * (paginationSettings.page + 1) > $page.data.data.length) {
-			(async () => {
-				const data = await getMany(
-					Collections.routes,
-					`sort_by=entity,method&limit=${paginationSettings.limit}&page=${paginationSettings.page}`
-				);
-				display = data.data;
-			})();
+	const refresh = async (
+		page: number = paginationSettings.page,
+		limit: number = paginationSettings.limit
+	) => {
+		if (search) {
+			const data = await getMany(
+				Collections.routes,
+				`sort_by=entity,method&${queryString(search)}`
+			);
+			display = data.data.slice(limit * page, limit * (page + 1));
+			paginationSettings.size = data.total;
+		} else if (limit * (page + 1) > $page.data.data.length) {
+			const data = await getMany(
+				Collections.routes,
+				`sort_by=entity,method&limit=${limit}&page=${page}`
+			);
+			display = data.data;
 		} else {
-			display =
-				paginationSettings.limit === $page.data.data.length
-					? $page.data.data
-					: $page.data.data.slice(
-							paginationSettings.limit * paginationSettings.page,
-							paginationSettings.limit * (paginationSettings.page + 1)
-					  );
+			display = $page.data.data.slice(limit * page, limit * (page + 1));
 		}
-	}
+	};
 
-	const getModal: (selected: string) => ModalSettings = (selected: string) => ({
-		type: 'confirm',
-		// Data
-		title: 'Please Confirm',
-		body: `Are you sure you wish to delete the route with ObjectId("${selected}")?`,
-		// TRUE if confirm pressed, FALSE if cancel pressed
-		response: async (r: boolean) => {
-			if (r) {
-				await deleteOne(Collections.routes, selected, $page.data.token);
-				await invalidateAll();
-			}
-		}
-	});
+	const handleSearch = async () => {
+		await refresh();
+	};
 </script>
 
+<form class="flex gap-2" on:submit={handleSearch}>
+	<div class="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
+		<label class="label">
+			<span>Search</span>
+			<input
+				class="p-2 max-w-xs input variant-soft"
+				type="text"
+				bind:value={search.q}
+				placeholder="Search"
+			/>
+		</label>
+	</div>
+	<div class="self-end">
+		<button class="w-24 btn variant-filled-secondary" type="submit">Submit</button>
+	</div>
+</form>
+<hr class="my-3" />
 <!-- Responsive Container (recommended) -->
 <div class="overflow-auto table-container">
 	<!-- Native Table Element -->
@@ -110,18 +123,14 @@
 						>
 					</td>
 					<td>
-						<a href={`/routes/${row._id}`} class="btn btn-sm variant-filled">
-							<span>Edit</span>
-						</a>
-						<button
-							type="button"
-							class="btn btn-sm variant-filled-primary"
-							on:click={() => {
-								modalStore.trigger(getModal(row._id));
+						<RowButtons
+							entity={Collections.routes}
+							rowId={row._id}
+							onDelete={async () => {
+								await refresh();
+								paginationSettings.size = $page.data.total;
 							}}
-						>
-							<span>Delete</span>
-						</button>
+						/>
 					</td>
 				</tr>
 			{/each}
@@ -130,7 +139,7 @@
 			<tr>
 				<td colspan="5" />
 				<th>Total</th>
-				<th>{$page.data.total}</th>
+				<th>{paginationSettings.size}</th>
 			</tr>
 		</tfoot>
 	</table>
@@ -142,4 +151,10 @@
 	bind:settings={paginationSettings}
 	showFirstLastButtons={false}
 	showPreviousNextButtons={true}
+	on:amount={async ({ detail }) => {
+		await refresh(paginationSettings.page, detail);
+	}}
+	on:page={async ({ detail }) => {
+		await refresh(detail, paginationSettings.limit);
+	}}
 />

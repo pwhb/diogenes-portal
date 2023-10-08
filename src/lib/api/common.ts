@@ -1,4 +1,5 @@
 import { PUBLIC_BACKEND_URL } from "$env/static/public";
+import { Collections } from "$lib/consts/db";
 
 export const getMany = async (collectionName: string, query?: string) =>
 {
@@ -66,6 +67,28 @@ export const getPermissions = async (token: string) =>
         headers: {
             "Authorization": `Bearer ${token}`
         }
+    });
+    const data = await res.json();
+    return data;
+};
+
+export const uploadBulk = async (files: FileList, token: string) =>
+{
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++)
+    {
+        const file = files.item(i);
+        formData.append("files", file!);
+        formData.append("types", file!.type);
+    }
+
+    const url = `${PUBLIC_BACKEND_URL}/api/v1/${Collections.uploads}/multiple`;
+    const res = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        body: formData
     });
     const data = await res.json();
     return data;

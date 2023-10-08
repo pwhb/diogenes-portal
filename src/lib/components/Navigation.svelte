@@ -24,7 +24,9 @@
 		<hr class="my-3" />
 		<li>
 			<form action="/logout" method="POST" class="w-full">
-				<button type="submit" class="w-full">Log out</button>
+				<button type="submit" class="w-full">
+					<img src="/svg/logout-svgrepo-com.svg" class="mr-2 w-6" alt="logout" />Log out</button
+				>
 			</form>
 		</li>
 	</ul>

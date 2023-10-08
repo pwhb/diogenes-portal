@@ -2,6 +2,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { deleteOne } from '$lib/api/common';
+	import RowButtons from '$lib/components/RowButtons.svelte';
 	import { Collections } from '$lib/consts/db';
 
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
@@ -57,18 +58,7 @@
 					</td>
 					<td>{row.createdAt}</td>
 					<td>
-						<a href={`/roles/${row._id}`} class="btn btn-sm variant-filled">
-							<span>Edit</span>
-						</a>
-						<button
-							type="button"
-							class="btn btn-sm variant-filled-primary"
-							on:click={() => {
-								modalStore.trigger(getModal(row._id));
-							}}
-						>
-							<span>Delete</span>
-						</button>
+						<RowButtons entity={Collections.roles} rowId={row._id} />
 					</td>
 				</tr>
 			{/each}

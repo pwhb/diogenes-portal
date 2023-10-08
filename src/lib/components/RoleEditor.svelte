@@ -4,6 +4,7 @@
 	import { createOne, updateOne } from '$lib/api/common';
 	import { Collections } from '$lib/consts/db';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import EditorLayout from './EditorLayout.svelte';
 
 	export let doc = {
 		_id: '',
@@ -12,10 +13,13 @@
 		active: false
 	};
 
+	let errorMessage = '';
+
 	const create = $page.url.pathname.includes('create');
 	let isLoading = false;
 
-	console.log($page.data);
+	const { routes } = $page.data.permissions.filter((v: any) => v._id === Collections.roles)[0];
+	const editAllowed = routes.some((v: any) => v.method === 'PATCH');
 
 	const handleSubmit = async () => {
 		try {
@@ -31,7 +35,9 @@
 				: await updateOne(Collections.roles, $page.data.token, doc._id, payload);
 
 			if (data.data) {
-				goto(`/${Collections.roles}`);
+				goto(`/${Collections.routes}`);
+			} else {
+				errorMessage = data.message;
 			}
 		} catch (e) {
 			console.error(e);
@@ -41,46 +47,51 @@
 	};
 </script>
 
-<div class="flex">
-	<div class="m-auto max-w-sm">
-		<div class="p-8 shadow-lg card bg-neutral-200">
-			<form class="my-6" on:submit={handleSubmit}>
-				<label class="label">
-					<span>Name</span>
-					<input
-						class="p-3 input variant-soft"
-						type="text"
-						name="name"
-						placeholder="Name"
-						bind:value={doc.name}
-					/>
-				</label>
-				<br />
-				<label class="label">
-					<span>Level</span>
+<EditorLayout>
+	<form class="my-3" on:submit={handleSubmit}>
+		<label class="label">
+			<span>Name</span>
+			<input
+				class="p-3 input variant-soft"
+				type="text"
+				name="name"
+				placeholder="Name"
+				bind:value={doc.name}
+				disabled={!editAllowed}
+			/>
+		</label>
+		<br />
+		<label class="label">
+			<span>Level</span>
 
-					<input
-						class="p-3 input variant-soft"
-						type="text"
-						name="level"
-						placeholder="level"
-						bind:value={doc.level}
-					/>
-				</label>
-				<br />
+			<input
+				class="p-3 input variant-soft"
+				type="text"
+				name="level"
+				placeholder="level"
+				bind:value={doc.level}
+				disabled={!editAllowed}
+			/>
+		</label>
+		<br />
 
-				<SlideToggle
-					name="slider-label"
-					size="sm"
-					bind:checked={doc.active}
-					disabled={create}
-					active="bg-surface-300">Active?</SlideToggle
-				>
-				<hr class="my-6" />
-				<button type="submit" class={`w-full btn variant-filled-secondary`} disabled={isLoading}
-					>{create ? 'Create' : 'Save'}</button
-				>
-			</form>
-		</div>
-	</div>
-</div>
+		<SlideToggle
+			name="slider-label"
+			size="sm"
+			bind:checked={doc.active}
+			disabled={create || !editAllowed}
+			active="bg-surface-300">Active?</SlideToggle
+		>
+		{#if errorMessage}
+			<p class="my-3 text-error-500">{errorMessage}</p>
+		{/if}
+		<hr class="my-6" />
+		{#if create || editAllowed}
+			<button type="submit" class={`w-full btn variant-filled-secondary`} disabled={isLoading}
+				>{create ? 'Create' : 'Save'}</button
+			>
+		{:else}
+			<a href="/routes" class={`w-full btn variant-filled-secondary`}>Back</a>
+		{/if}
+	</form>
+</EditorLayout>

@@ -3,8 +3,6 @@ import type { Action, Actions } from "./$types";
 
 const logout: Action = async ({ cookies }) =>
 {
-    console.log("logout");
-    
     cookies.delete("user");
     cookies.delete("token");
     throw redirect(302, '/');
