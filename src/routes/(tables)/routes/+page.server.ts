@@ -3,9 +3,11 @@ import type { PageServerLoad } from "./$types";
 import { getMany } from "$lib/api/common";
 import { Collections } from "$lib/consts/db";
 
-export const load: PageServerLoad = async ({ params }) =>
+export const load: PageServerLoad = async ({ params, url }) =>
 {
-    const data = await getMany(Collections.routes, "sort_by=entity,method");
+    const data = await getMany(Collections.routes, url.search ? `${url.search}&sort_by=entity,method` : "?page=0&limit=10&sort_by=entity,method");
+    console.log("url", url.search ? `${url.search}&sort_by=entity,method` : "?page=0&limit=10&sort_by=entity,method");
+
     if (data)
     {
         return data;

@@ -3,9 +3,9 @@ import type { PageServerLoad } from "./$types";
 import { getMany } from "$lib/api/common";
 import { Collections } from "$lib/consts/db";
 
-export const load: PageServerLoad = async ({ params }) =>
+export const load: PageServerLoad = async ({ params, url }) =>
 {
-    const data = await getMany(Collections.users);
+    const data = await getMany(Collections.users, `${url.search ? url.search : "?page=0&limit=10"}`);
     if (data)
     {
         return data;

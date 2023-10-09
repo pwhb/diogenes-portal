@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
-	import { getMany } from '$lib/api/common';
 	import { Collections } from '$lib/consts/db';
 
 	import RowButtons from '$lib/components/RowButtons.svelte';
-	import { queryString } from '$lib/helpers/parser';
+	import { goto } from '$app/navigation';
 
 	let paginationSettings = {
 		page: 0,
@@ -14,58 +13,42 @@
 		amounts: [10, 20]
 	} satisfies PaginationSettings;
 
-	let display: any[] = $page.data.data.slice(
-		paginationSettings.limit * paginationSettings.page,
-		paginationSettings.limit * (paginationSettings.page + 1)
-	);
-	let searched: any[] = [];
-	let search = {
-		q: ''
+	let search: any = {
+		q: $page.url.searchParams.get('q')
 	};
 
-	const refresh = async (
-		page: number = paginationSettings.page,
-		limit: number = paginationSettings.limit
-	) => {
-		if (search) {
-			const data = await getMany(
-				Collections.routes,
-				`sort_by=entity,method&${queryString(search)}`
-			);
-			display = data.data.slice(limit * page, limit * (page + 1));
-			paginationSettings.size = data.total;
-		} else if (limit * (page + 1) > $page.data.data.length) {
-			const data = await getMany(
-				Collections.routes,
-				`sort_by=entity,method&limit=${limit}&page=${page}`
-			);
-			display = data.data;
-		} else {
-			display = $page.data.data.slice(limit * page, limit * (page + 1));
-		}
-	};
+	$: {
+		paginationSettings.size = $page.data.total;
+		paginationSettings.page = parseInt($page.url.searchParams.get('page') || '0');
+		paginationSettings.limit = parseInt($page.url.searchParams.get('limit') || '10');
+	}
 
-	const handleSearch = async () => {
-		await refresh();
-	};
+	function handleSearch(e: any) {
+		e.preventDefault();
+		const url = $page.url;
+		url.searchParams.set('page', '0');
+		url.searchParams.set('limit', paginationSettings.limit.toString());
+		url.searchParams.set('q', search.q);
+		goto(url, {
+			invalidateAll: true
+		});
+	}
 </script>
 
 <form class="flex gap-2" on:submit={handleSearch}>
 	<div class="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-		<label class="label">
-			<span>Search</span>
-			<input
-				class="p-2 max-w-xs input variant-soft"
-				type="text"
-				bind:value={search.q}
-				placeholder="Search"
-			/>
-		</label>
+		<input
+			class="p-2 max-w-xs input variant-soft"
+			type="search"
+			bind:value={search.q}
+			placeholder="Search"
+		/>
 	</div>
 	<div class="self-end">
 		<button class="w-24 btn variant-filled-secondary" type="submit">Submit</button>
 	</div>
 </form>
+
 <hr class="my-3" />
 <!-- Responsive Container (recommended) -->
 <div class="overflow-auto table-container">
@@ -88,7 +71,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each display as row, i}
+			{#each $page.data.data as row, i}
 				<tr>
 					<th>{i + 1 + paginationSettings.limit * paginationSettings.page}</th>
 					<td>{row._id}</td>
@@ -127,8 +110,7 @@
 							entity={Collections.routes}
 							rowId={row._id}
 							onDelete={async () => {
-								await refresh();
-								paginationSettings.size = $page.data.total;
+								// await refreshSearched();
 							}}
 						/>
 					</td>
@@ -152,9 +134,20 @@
 	showFirstLastButtons={false}
 	showPreviousNextButtons={true}
 	on:amount={async ({ detail }) => {
-		await refresh(paginationSettings.page, detail);
+		const url = $page.url;
+		url.searchParams.set('page', paginationSettings.page.toString());
+		url.searchParams.set('limit', detail.toString());
+		goto(url, {
+			invalidateAll: true
+		});
 	}}
 	on:page={async ({ detail }) => {
-		await refresh(detail, paginationSettings.limit);
+		const url = $page.url;
+		url.searchParams.set('page', detail.toString());
+		url.searchParams.set('limit', paginationSettings.limit.toString());
+		goto(url, {
+			invalidateAll: true
+		});
+		// goto(`/routes?page=${detail}&limit=${paginationSettings.limit}&sort_by=entity,method`);
 	}}
 />

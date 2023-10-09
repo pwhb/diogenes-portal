@@ -3,7 +3,8 @@ import { Collections } from "$lib/consts/db";
 
 export const getMany = async (collectionName: string, query?: string) =>
 {
-    const url = `${PUBLIC_BACKEND_URL}/api/v1/${collectionName}?${query}`;
+
+    const url = `${PUBLIC_BACKEND_URL}/api/v1/${collectionName}${query}`;
     const res = await fetch(url);
     const data = await res.json();
     return data;
