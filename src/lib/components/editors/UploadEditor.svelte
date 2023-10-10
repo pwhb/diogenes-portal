@@ -38,17 +38,14 @@
 
 			const data = await uploadBulk(files!, $page.data.token);
 
-			if (data.data) {
-				goto(`/${Collections.uploads}`);
-			} else {
-				message.text = data.message;
-			}
+			message.text = data.message;
 		} catch (e: any) {
 			console.error(e);
 			message.error = true;
 			message.text = e.message;
 		} finally {
 			isLoading = false;
+			reset();
 		}
 	};
 </script>
@@ -82,7 +79,7 @@
 			{#if message.error}
 				<p class="my-3 text-error-500">{message.text}</p>
 			{:else}
-				<p class="my-3 text-success-500">{message.text}</p>
+				<p class="my-3 text-green-500">{message.text}</p>
 			{/if}
 		{/if}
 		<hr class="my-6" />

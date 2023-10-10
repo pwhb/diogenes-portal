@@ -90,7 +90,7 @@
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="5" />
+				<td colspan="6" />
 				<th>Total</th>
 				<th>{paginationSettings.size}</th>
 			</tr>
