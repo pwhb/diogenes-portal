@@ -10,7 +10,10 @@
 	let files: FileList | undefined;
 	let preview: File[] = [];
 
-	let errorMessage = '';
+	let message = {
+		error: false,
+		text: ''
+	};
 	let isLoading = false;
 
 	$: {
@@ -27,6 +30,10 @@
 	};
 	const handleSubmit = async () => {
 		try {
+			message = {
+				error: false,
+				text: ''
+			};
 			isLoading = true;
 
 			const data = await uploadBulk(files!, $page.data.token);
@@ -34,10 +41,12 @@
 			if (data.data) {
 				goto(`/${Collections.uploads}`);
 			} else {
-				errorMessage = data.message;
+				message.text = data.message;
 			}
-		} catch (e) {
+		} catch (e: any) {
 			console.error(e);
+			message.error = true;
+			message.text = e.message;
 		} finally {
 			isLoading = false;
 		}
@@ -47,7 +56,7 @@
 <EditorLayout>
 	<form class="my-3" on:submit={handleSubmit}>
 		{#if preview.length}
-			<div class="flex flex-wrap gap-2 my-10">
+			<div class="flex flex-wrap gap-2 items-center my-10">
 				{#each preview as file}
 					<Preview src={URL.createObjectURL(file)} name={file.name} contentType={file.type} />
 				{/each}
@@ -69,8 +78,12 @@
 			<svelte:fragment slot="meta" />
 		</FileDropzone>
 
-		{#if errorMessage}
-			<p class="my-3 text-error-500">{errorMessage}</p>
+		{#if message.text}
+			{#if message.error}
+				<p class="my-3 text-error-500">{message.text}</p>
+			{:else}
+				<p class="my-3 text-success-500">{message.text}</p>
+			{/if}
 		{/if}
 		<hr class="my-6" />
 
