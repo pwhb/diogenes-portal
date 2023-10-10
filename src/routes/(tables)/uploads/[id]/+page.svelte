@@ -9,11 +9,11 @@
 </script>
 
 <EditorLayout>
-	<Preview src={url} contentType={doc.ContentType} name={doc.Key} />
-	<div class="my-4 text-center">
+	<div class="flex flex-col gap-5 items-center my-4">
+		<Preview src={url} contentType={doc.ContentType} name={doc.Key} />
 		<CopyButton {url} />
 	</div>
-	<div class="mt-4">
+	<div>
 		<table>
 			<tr>
 				<td>URL</td>
