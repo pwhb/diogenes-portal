@@ -1,32 +1,28 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { deleteOne } from '$lib/api/common';
-	import RowButtons from '$lib/components/RowButtons.svelte';
+	import RowButtons from '$lib/components/common/RowButtons.svelte';
+	import TableWrapper from '$lib/components/layout/TableWrapper.svelte';
 	import { Collections } from '$lib/consts/db';
+	import type { PaginationSettings } from '@skeletonlabs/skeleton';
 
-	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	let paginationSettings = {
+		page: 0,
+		limit: 10,
+		size: $page.data.total,
+		amounts: [10, 20]
+	} satisfies PaginationSettings;
 
-	const modalStore = getModalStore();
+	let search: any = {
+		q: $page.url.searchParams.get('q')
+	};
 
-	const getModal: (selected: string) => ModalSettings = (selected: string) => ({
-		type: 'confirm',
-		// Data
-		title: 'Please Confirm',
-		body: `Are you sure you wish to delete the role with ObjectId("${selected}")?`,
-		// TRUE if confirm pressed, FALSE if cancel pressed
-		response: async (r: boolean) => {
-			if (r) {
-				await deleteOne(Collections.roles, selected, $page.data.token);
-				await invalidateAll();
-			}
-		}
-	});
+	$: {
+		paginationSettings.size = $page.data.total;
+		paginationSettings.page = parseInt($page.url.searchParams.get('page') || '0');
+	}
 </script>
 
-<!-- Responsive Container (recommended) -->
-<div class="overflow-auto table-container">
-	<!-- Native Table Element -->
+<TableWrapper bind:paginationSettings bind:search>
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -71,4 +67,4 @@
 			</tr>
 		</tfoot>
 	</table>
-</div>
+</TableWrapper>

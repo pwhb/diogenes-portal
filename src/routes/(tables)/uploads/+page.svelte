@@ -1,15 +1,31 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
-	import Preview from '$lib/components/Preview.svelte';
-	import RowButtons from '$lib/components/RowButtons.svelte';
+	import Preview from '$lib/components/common/Preview.svelte';
+	import RowButtons from '$lib/components/common/RowButtons.svelte';
+	import TableWrapper from '$lib/components/layout/TableWrapper.svelte';
 	import { Collections } from '$lib/consts/db';
 	import { formatBytes } from '$lib/helpers/parser';
+	import type { PaginationSettings } from '@skeletonlabs/skeleton';
+
+	let paginationSettings = {
+		page: 0,
+		limit: 10,
+		size: $page.data.total,
+		amounts: [10, 20]
+	} satisfies PaginationSettings;
+
+	let search: any = {
+		q: $page.url.searchParams.get('q')
+	};
+
+	$: {
+		paginationSettings.size = $page.data.total;
+		paginationSettings.page = parseInt($page.url.searchParams.get('page') || '0');
+	}
 </script>
 
-<!-- Responsive Container (recommended) -->
-<div class="overflow-auto table-container">
-	<!-- Native Table Element -->
+<TableWrapper bind:paginationSettings bind:search>
 	<table class="table overflow-auto table-hover">
 		<thead>
 			<tr>
@@ -57,4 +73,4 @@
 			</tr>
 		</tfoot>
 	</table>
-</div>
+</TableWrapper>

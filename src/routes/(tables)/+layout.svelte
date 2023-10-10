@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import { AppBar, AppShell } from '@skeletonlabs/skeleton';
-	import Navigation from '$lib/components/Navigation.svelte';
-	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import Navigation from '$lib/components/layout/Navigation.svelte';
+	import Breadcrumbs from '$lib/components/layout/Breadcrumbs.svelte';
 	import { Modal } from '@skeletonlabs/skeleton';
-	
+
 	initializeStores();
 	const drawerStore = getDrawerStore();
 	function drawerOpen(): void {

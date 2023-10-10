@@ -3,9 +3,9 @@
 	import { page } from '$app/stores';
 	import { uploadBulk } from '$lib/api/common';
 	import { Collections } from '$lib/consts/db';
+	import Preview from '../common/Preview.svelte';
 	import EditorLayout from './EditorLayout.svelte';
 	import { FileDropzone } from '@skeletonlabs/skeleton';
-	import Preview from './Preview.svelte';
 
 	let files: FileList | undefined;
 	let preview: File[] = [];

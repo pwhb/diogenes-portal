@@ -1,5 +1,5 @@
 <script>
-	import RoleEditor from '$lib/components/RoleEditor.svelte';
+	import RoleEditor from '$lib/components/editors/RoleEditor.svelte';
 </script>
 
 <RoleEditor />

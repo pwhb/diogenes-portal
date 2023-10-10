@@ -35,7 +35,7 @@
 				: await updateOne(Collections.roles, $page.data.token, doc._id, payload);
 
 			if (data.data) {
-				goto(`/${Collections.routes}`);
+				goto(`/${Collections.roles}`);
 			} else {
 				errorMessage = data.message;
 			}

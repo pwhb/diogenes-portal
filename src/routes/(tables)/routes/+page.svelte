@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
 	import { Collections } from '$lib/consts/db';
 
-	import RowButtons from '$lib/components/RowButtons.svelte';
-	import { goto } from '$app/navigation';
+	import RowButtons from '$lib/components/common/RowButtons.svelte';
+	import TableWrapper from '$lib/components/layout/TableWrapper.svelte';
+	import type { PaginationSettings } from '@skeletonlabs/skeleton';
 
 	let paginationSettings = {
 		page: 0,
@@ -20,39 +20,10 @@
 	$: {
 		paginationSettings.size = $page.data.total;
 		paginationSettings.page = parseInt($page.url.searchParams.get('page') || '0');
-		paginationSettings.limit = parseInt($page.url.searchParams.get('limit') || '10');
-	}
-
-	function handleSearch(e: any) {
-		e.preventDefault();
-		const url = $page.url;
-		url.searchParams.set('page', '0');
-		url.searchParams.set('limit', paginationSettings.limit.toString());
-		url.searchParams.set('q', search.q);
-		goto(url, {
-			invalidateAll: true
-		});
 	}
 </script>
 
-<form class="flex gap-2" on:submit={handleSearch}>
-	<div class="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-		<input
-			class="p-2 max-w-xs input variant-soft"
-			type="search"
-			bind:value={search.q}
-			placeholder="Search"
-		/>
-	</div>
-	<div class="self-end">
-		<button class="w-24 btn variant-filled-secondary" type="submit">Submit</button>
-	</div>
-</form>
-
-<hr class="my-3" />
-<!-- Responsive Container (recommended) -->
-<div class="overflow-auto table-container">
-	<!-- Native Table Element -->
+<TableWrapper bind:paginationSettings bind:search>
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -125,29 +96,4 @@
 			</tr>
 		</tfoot>
 	</table>
-</div>
-
-<hr class="my-3" />
-
-<Paginator
-	bind:settings={paginationSettings}
-	showFirstLastButtons={false}
-	showPreviousNextButtons={true}
-	on:amount={async ({ detail }) => {
-		const url = $page.url;
-		url.searchParams.set('page', paginationSettings.page.toString());
-		url.searchParams.set('limit', detail.toString());
-		goto(url, {
-			invalidateAll: true
-		});
-	}}
-	on:page={async ({ detail }) => {
-		const url = $page.url;
-		url.searchParams.set('page', detail.toString());
-		url.searchParams.set('limit', paginationSettings.limit.toString());
-		goto(url, {
-			invalidateAll: true
-		});
-		// goto(`/routes?page=${detail}&limit=${paginationSettings.limit}&sort_by=entity,method`);
-	}}
-/>
+</TableWrapper>

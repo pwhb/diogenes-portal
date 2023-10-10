@@ -1,5 +1,5 @@
 <script>
-	import UploadEditor from '$lib/components/UploadEditor.svelte';
+	import UploadEditor from '$lib/components/editors/UploadEditor.svelte';
 </script>
 
 <UploadEditor />
