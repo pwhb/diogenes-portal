@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import CreateButton from '$lib/components/common/CreateButton.svelte';
 	import RowButtons from '$lib/components/common/RowButtons.svelte';
 	import TableWrapper from '$lib/components/layout/TableWrapper.svelte';
 	import { Collections } from '$lib/consts/db';
@@ -31,11 +32,7 @@
 				<th>Role</th>
 				<th>Active</th>
 				<th>Created At</th>
-				<th
-					><button type="button" class="btn btn-sm variant-filled-secondary">
-						<span>Create</span>
-					</button>
-				</th>
+				<th><CreateButton slug={'users'} /> </th>
 			</tr>
 		</thead>
 		<tbody>

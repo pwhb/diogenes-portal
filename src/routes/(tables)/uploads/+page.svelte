@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import CreateButton from '$lib/components/common/CreateButton.svelte';
 	import Preview from '$lib/components/common/Preview.svelte';
 	import RowButtons from '$lib/components/common/RowButtons.svelte';
 	import TableWrapper from '$lib/components/layout/TableWrapper.svelte';
@@ -36,11 +37,7 @@
 				<th>Size</th>
 				<th>Preview</th>
 				<th>Created At</th>
-				<th
-					><a href="/uploads/create" class="btn btn-sm variant-filled-secondary">
-						<span>Create</span>
-					</a>
-				</th>
+				<th><CreateButton slug={'uploads'} /> </th>
 			</tr>
 		</thead>
 		<tbody>

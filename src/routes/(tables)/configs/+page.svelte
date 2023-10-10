@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import CreateButton from '$lib/components/common/CreateButton.svelte';
 	import RowButtons from '$lib/components/common/RowButtons.svelte';
 	import TableWrapper from '$lib/components/layout/TableWrapper.svelte';
 	import { Collections } from '$lib/consts/db';
@@ -29,11 +30,7 @@
 				<th>ObjectId</th>
 				<th>Name</th>
 				<th>Updated At</th>
-				<th
-					><a href="/configs/create" class="btn btn-sm variant-filled-secondary">
-						<span>Create</span>
-					</a>
-				</th>
+				<th><CreateButton slug={'configs'} /> </th>
 			</tr>
 		</thead>
 		<tbody>
