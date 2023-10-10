@@ -1,15 +1,21 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { getPermissions } from '$lib/api/common';
+import { getOneByKey, getPermissions } from '$lib/api/common';
+import { Collections } from "$lib/consts/db";
 
-export const load: LayoutServerLoad = async ({ locals }) => {
-	if (!locals.user) {
+export const load: LayoutServerLoad = async ({ locals }) =>
+{
+	if (!locals.user)
+	{
 		throw redirect(302, '/auth/login');
 	}
 	const permissions = await getPermissions(locals.token);
+	const config = await getOneByKey(Collections.configs, "frontend");
+
 	return {
 		user: locals.user,
 		token: locals.token,
+		config: config,
 		...permissions.data
 	};
 };

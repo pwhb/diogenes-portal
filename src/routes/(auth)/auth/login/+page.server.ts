@@ -4,12 +4,12 @@ import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 export const load: PageServerLoad = async ({ locals }) =>
 {
-	if (locals.user)
-	{
-		{
-			throw redirect(302, '/');
-		}
+	if (locals.user) {
+		throw redirect(302, '/users');
+	} else {
+		throw redirect(302, '/auth/login');
 	}
+	
 };
 
 const login: Action = async ({ request, cookies }) =>
@@ -45,20 +45,21 @@ const login: Action = async ({ request, cookies }) =>
 			cookies.set('token', json.data.token, {
 				path: '/'
 			});
-
-			throw redirect(303, '/');
 		} else
 		{
 			return fail(400, { message: json.message });
 		}
 	} catch (error: any)
 	{
-		console.error(error);
+		console.error("login error", error);
 		if (error.message)
 		{
 			return fail(400, { message: error.message });
 		}
 		return fail(400, { message: "something went wrong" });
+	} finally
+	{
+		throw redirect(303, '/configs');
 	}
 
 };

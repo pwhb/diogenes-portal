@@ -6,7 +6,7 @@
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import EditorLayout from './EditorLayout.svelte';
 
-	export let doc = {
+	export let doc: any = {
 		_id: '',
 		name: '',
 		level: '',
@@ -85,13 +85,29 @@
 		{#if errorMessage}
 			<p class="my-3 text-error-500">{errorMessage}</p>
 		{/if}
+		{#if !create}
+			<div class="mt-4">
+				<table>
+					<tr>
+						<td>Created At</td>
+						<td>:</td>
+						<td>{doc.createdAt}</td>
+					</tr>
+					<tr>
+						<td>Updated At</td>
+						<td>:</td>
+						<td>{doc.updatedAt}</td>
+					</tr>
+				</table>
+			</div>
+		{/if}
 		<hr class="my-6" />
 		{#if create || editAllowed}
 			<button type="submit" class={`w-full btn variant-filled-secondary`} disabled={isLoading}
 				>{create ? 'Create' : 'Save'}</button
 			>
 		{:else}
-			<a href="/routes" class={`w-full btn variant-filled-secondary`}>Back</a>
+			<a href="/roles" class={`w-full btn variant-filled-secondary`}>Back</a>
 		{/if}
 	</form>
 </EditorLayout>

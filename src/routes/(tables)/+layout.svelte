@@ -4,6 +4,7 @@
 	import Navigation from '$lib/components/layout/Navigation.svelte';
 	import Breadcrumbs from '$lib/components/layout/Breadcrumbs.svelte';
 	import { Modal } from '@skeletonlabs/skeleton';
+	import { page } from '$app/stores';
 
 	initializeStores();
 	const drawerStore = getDrawerStore();
@@ -30,8 +31,12 @@
 							</svg>
 						</span>
 					</button>
-					<img src="/svg/barrel-svgrepo-com.svg" alt="" class="w-8 rotate-[60deg] mr-3 shadow-lg" />
-					<strong class="text-xl uppercase">Diogenes</strong>
+					<img
+						src={$page.data.config.data.nav.icon}
+						alt=""
+						class="w-8 rotate-[60deg] mr-3 shadow-lg"
+					/>
+					<strong class="text-xl uppercase">{$page.data.config.data.nav.appName}</strong>
 				</div></svelte:fragment
 			>
 			<!-- (title)
