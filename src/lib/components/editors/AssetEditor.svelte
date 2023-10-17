@@ -2,9 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { createOne, updateOne } from '$lib/api/common';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import { Autocomplete, SlideToggle, type AutocompleteOption } from '@skeletonlabs/skeleton';
 	import EditorLayout from './EditorLayout.svelte';
 	import { Collections } from '$lib/consts/db';
+	import Preview from '../common/Preview.svelte';
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 	export let doc: any = {
 		_id: '',
@@ -14,6 +16,8 @@
 		type: '',
 		active: false
 	};
+
+	const { assets } = $page.data.portal.data;
 
 	let errorMessage = '';
 
@@ -49,6 +53,18 @@
 			isLoading = false;
 		}
 	};
+
+	let uploadKey = '';
+
+	const options: AutocompleteOption<string>[] = $page.data.uploads.map((upload: any) => ({
+		label: upload.Key,
+		value: upload._id
+	}));
+
+	function onPathSelection(event: CustomEvent<AutocompleteOption<string>>): void {
+		doc.path = `/api/v1/uploads/${event.detail.value}`;
+		uploadKey = event.detail.label;
+	}
 </script>
 
 <EditorLayout>
@@ -67,18 +83,25 @@
 		<br />
 		<label class="label">
 			<span>Path</span>
+
+			<Preview src={`${PUBLIC_BACKEND_URL}${doc.path}`} name="preview" contentType="image" />
+
 			<input
 				class="p-3 input variant-soft"
-				type="text"
+				type="search"
 				name="path"
+				bind:value={uploadKey}
 				placeholder="Path"
-				bind:value={doc.path}
-				disabled={!editAllowed}
 			/>
+
+			<div class="overflow-y-auto p-2 w-full max-w-sm max-h-48 card" tabindex="-1">
+				<Autocomplete bind:input={uploadKey} {options} on:selection={onPathSelection} />
+			</div>
 		</label>
+
 		<br />
 		<label class="label">
-			<span>Category</span>
+			<!-- <span>Category</span>
 			<input
 				class="p-3 input variant-soft"
 				type="text"
@@ -86,7 +109,19 @@
 				placeholder="Category"
 				bind:value={doc.category}
 				disabled={!editAllowed}
-			/>
+			/> -->
+
+			<span>Category</span>
+			<select class="p-3 select variant-soft" bind:value={doc.category} disabled={!editAllowed}>
+				{#each assets.categories as category}
+					<option value={category}>{category}</option>
+				{/each}
+				<!-- // <option value="1">Option 1</option>
+				// <option value="2">Option 2</option>
+				// <option value="3">Option 3</option>
+				// <option value="4">Option 4</option>
+				// <option value="5">Option 5</option> -->
+			</select>
 		</label>
 		<br />
 		<label class="label">

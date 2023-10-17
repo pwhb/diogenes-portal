@@ -11,11 +11,12 @@ export const load: LayoutServerLoad = async ({ locals }) =>
 	}
 	const permissions = await getPermissions(locals.token);
 	const config = await getOneByKey(Collections.configs, "frontend");
-
+	const portal = await getOneByKey(Collections.configs, "portal");
 	return {
 		user: locals.user,
 		token: locals.token,
 		config: config,
+		portal: portal,
 		...permissions.data
 	};
 };
