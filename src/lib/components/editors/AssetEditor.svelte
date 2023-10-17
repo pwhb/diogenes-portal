@@ -4,11 +4,14 @@
 	import { createOne, updateOne } from '$lib/api/common';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import EditorLayout from './EditorLayout.svelte';
+	import { Collections } from '$lib/consts/db';
 
-	export let slug: string;
 	export let doc: any = {
 		_id: '',
 		name: '',
+		path: '',
+		category: '',
+		type: '',
 		active: false
 	};
 
@@ -17,7 +20,7 @@
 	const create = $page.url.pathname.includes('create');
 	let isLoading = false;
 
-	const { routes } = $page.data.permissions.filter((v: any) => v._id === slug)[0];
+	const { routes } = $page.data.permissions.filter((v: any) => v._id === Collections.assets)[0];
 	const editAllowed = routes.some((v: any) => v.method === 'PATCH');
 
 	const handleSubmit = async () => {
@@ -25,15 +28,18 @@
 			isLoading = true;
 			const payload = {
 				name: doc.name,
+				path: doc.path,
+				category: doc.category,
+				type: doc.type,
 				active: doc.active
 			};
 
 			const data = create
-				? await createOne(slug, $page.data.token, payload)
-				: await updateOne(slug, $page.data.token, doc._id, payload);
+				? await createOne(Collections.assets, $page.data.token, payload)
+				: await updateOne(Collections.assets, $page.data.token, doc._id, payload);
 
 			if (data.data) {
-				goto(`/${slug}`);
+				goto(`/${Collections.assets}`);
 			} else {
 				errorMessage = data.message;
 			}
@@ -55,6 +61,42 @@
 				name="name"
 				placeholder="Name"
 				bind:value={doc.name}
+				disabled={!editAllowed}
+			/>
+		</label>
+		<br />
+		<label class="label">
+			<span>Path</span>
+			<input
+				class="p-3 input variant-soft"
+				type="text"
+				name="path"
+				placeholder="Path"
+				bind:value={doc.path}
+				disabled={!editAllowed}
+			/>
+		</label>
+		<br />
+		<label class="label">
+			<span>Category</span>
+			<input
+				class="p-3 input variant-soft"
+				type="text"
+				name="category"
+				placeholder="Category"
+				bind:value={doc.category}
+				disabled={!editAllowed}
+			/>
+		</label>
+		<br />
+		<label class="label">
+			<span>Type</span>
+			<input
+				class="p-3 input variant-soft"
+				type="text"
+				name="type"
+				placeholder="Type"
+				bind:value={doc.type}
 				disabled={!editAllowed}
 			/>
 		</label>

@@ -40,7 +40,7 @@
 		<tbody>
 			{#each $page.data.data as row, i}
 				<tr>
-					<th>{i + 1}</th>
+					<th>{i + 1 + paginationSettings.limit * paginationSettings.page}</th>
 					<td>{row._id}</td>
 					<td>{row.name}</td>
 					<td>

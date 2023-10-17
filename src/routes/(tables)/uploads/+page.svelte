@@ -43,7 +43,7 @@
 		<tbody>
 			{#each $page.data.data as row, i}
 				<tr>
-					<th>{i + 1}</th>
+					<th>{i + 1 + paginationSettings.limit * paginationSettings.page}</th>
 					<td><a href={`${PUBLIC_BACKEND_URL}/api/v1/uploads/${row._id}`}>{row._id}</a></td>
 					<td>{row.Key}</td>
 					<td>{row.ContentType}</td>

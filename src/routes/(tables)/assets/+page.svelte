@@ -21,6 +21,8 @@
 		paginationSettings.size = $page.data.total;
 		paginationSettings.page = parseInt($page.url.searchParams.get('page') || '0');
 	}
+
+	console.log($page.data);
 </script>
 
 <TableWrapper bind:paginationSettings bind:search>
@@ -30,10 +32,11 @@
 				<th>No.</th>
 				<th>ObjectId</th>
 				<th>Name</th>
-				<th>Level</th>
+				<th>Category</th>
+				<th>Type</th>
 				<th>Active?</th>
 				<th>Created At</th>
-				<th><CreateButton slug={'roles'} /> </th>
+				<th><CreateButton slug={Collections.assets} /> </th>
 			</tr>
 		</thead>
 		<tbody>
@@ -42,7 +45,8 @@
 					<th>{i + 1 + paginationSettings.limit * paginationSettings.page}</th>
 					<td>{row._id}</td>
 					<td>{row.name}</td>
-					<td>{row.level}</td>
+					<td>{row.category}</td>
+					<td>{row.type}</td>
 					<td>
 						<span
 							class={`badge ${row.active ? 'variant-filled-secondary' : 'variant-filled-primary'}`}
@@ -51,14 +55,14 @@
 					</td>
 					<td>{row.createdAt}</td>
 					<td>
-						<RowButtons entity={Collections.roles} rowId={row._id} />
+						<RowButtons entity={Collections.assets} rowId={row._id} />
 					</td>
 				</tr>
 			{/each}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="5" />
+				<td colspan="6" />
 				<th>Total</th>
 				<th>{$page.data.total}</th>
 			</tr>
