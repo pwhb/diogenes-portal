@@ -32,7 +32,7 @@
 						</span>
 					</button>
 					<img
-						src={$page.data.config.data.nav.icon}
+						src={$page.data.config.data.nav.static_icon}
 						alt=""
 						class="w-8 rotate-[60deg] mr-3 shadow-lg"
 					/>

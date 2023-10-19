@@ -33,6 +33,7 @@
 				<th>ObjectId</th>
 				<th>Name</th>
 				<th>Category</th>
+				<th>Source</th>
 				<th>Type</th>
 				<th>Active?</th>
 				<th>Created At</th>
@@ -46,6 +47,7 @@
 					<td>{row._id}</td>
 					<td>{row.name}</td>
 					<td>{row.category}</td>
+					<td>{row.source}</td>
 					<td>{row.type}</td>
 					<td>
 						<span

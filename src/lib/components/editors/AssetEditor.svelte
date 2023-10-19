@@ -14,6 +14,7 @@
 		path: '',
 		category: '',
 		type: '',
+		source: 'static',
 		active: false
 	};
 
@@ -57,7 +58,7 @@
 	let uploadKey = '';
 
 	const options: AutocompleteOption<string>[] = $page.data.uploads.map((upload: any) => ({
-		label: upload.Key,
+		label: upload.originalName || upload.Key,
 		value: upload._id
 	}));
 
@@ -83,44 +84,48 @@
 		<br />
 		<label class="label">
 			<span>Path</span>
+			{#if doc.source === 's3'}
+				<Preview src={`${PUBLIC_BACKEND_URL}${doc.path}`} name="preview" contentType="image" />
 
-			<Preview src={`${PUBLIC_BACKEND_URL}${doc.path}`} name="preview" contentType="image" />
+				<input
+					class="p-3 input variant-soft"
+					type="search"
+					name="path"
+					bind:value={uploadKey}
+					placeholder="Path"
+				/>
 
-			<input
-				class="p-3 input variant-soft"
-				type="search"
-				name="path"
-				bind:value={uploadKey}
-				placeholder="Path"
-			/>
-
-			<div class="overflow-y-auto p-2 w-full max-w-sm max-h-48 card" tabindex="-1">
-				<Autocomplete bind:input={uploadKey} {options} on:selection={onPathSelection} />
-			</div>
+				<div class="overflow-y-auto p-2 w-full max-w-sm max-h-48 card" tabindex="-1">
+					<Autocomplete bind:input={uploadKey} {options} on:selection={onPathSelection} />
+				</div>
+			{:else}
+				<input
+					class="p-3 input variant-soft"
+					type="text"
+					name="path"
+					placeholder="Path"
+					bind:value={doc.path}
+					disabled={!editAllowed}
+				/>
+			{/if}
 		</label>
 
 		<br />
 		<label class="label">
-			<!-- <span>Category</span>
-			<input
-				class="p-3 input variant-soft"
-				type="text"
-				name="category"
-				placeholder="Category"
-				bind:value={doc.category}
-				disabled={!editAllowed}
-			/> -->
-
 			<span>Category</span>
 			<select class="p-3 select variant-soft" bind:value={doc.category} disabled={!editAllowed}>
 				{#each assets.categories as category}
 					<option value={category}>{category}</option>
 				{/each}
-				<!-- // <option value="1">Option 1</option>
-				// <option value="2">Option 2</option>
-				// <option value="3">Option 3</option>
-				// <option value="4">Option 4</option>
-				// <option value="5">Option 5</option> -->
+			</select>
+		</label>
+		<br />
+		<label class="label">
+			<span>Source</span>
+			<select class="p-3 select variant-soft" bind:value={doc.source} disabled={!editAllowed}>
+				{#each assets.sources as source}
+					<option value={source}>{source}</option>
+				{/each}
 			</select>
 		</label>
 		<br />
